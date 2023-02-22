@@ -1,8 +1,8 @@
-
 import io.restassured.response.ValidatableResponse;
+
 import static io.restassured.RestAssured.given;
 
-public class OrderClient extends Client{
+public class OrderClient extends Client {
     private static final String PATH = "api/orders";
 
     public ValidatableResponse createWithAuthWithIngridients(Order order, String accessToken) {
@@ -43,7 +43,7 @@ public class OrderClient extends Client{
                 .then();
     }
 
-    public ValidatableResponse listOrdersWithAuth(String accessToken){
+    public ValidatableResponse listOrdersWithAuth(String accessToken) {
         return given()
                 .header("authorization", "bearer " + accessToken)
                 .spec(getSpec())
@@ -53,7 +53,7 @@ public class OrderClient extends Client{
                 .then();
     }
 
-    public ValidatableResponse listOrdersWithoutAuth(){
+    public ValidatableResponse listOrdersWithoutAuth() {
         return given()
                 .spec(getSpec())
                 .body("")

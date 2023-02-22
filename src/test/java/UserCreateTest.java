@@ -1,8 +1,11 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.apache.http.HttpStatus.*;
+
+import static org.apache.http.HttpStatus.SC_FORBIDDEN;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertEquals;
 
 public class UserCreateTest {
@@ -17,13 +20,14 @@ public class UserCreateTest {
     }
 
     @After
-    public void cleanUp(){
-        if(accessToken != null)
+    public void cleanUp() {
+        if (accessToken != null)
             userClient.delete(accessToken);
     }
 
     @Test
-    public void userCanBeCreatedAndCheckStatusCode(){
+    @DisplayName("Создание пользователя. Проверка статус кода ответа")
+    public void userCanBeCreatedAndCheckStatusCode() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
@@ -32,6 +36,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя. Проверка тела ответа")
     public void userCanBeCreatedAndCheckResponse() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
@@ -41,6 +46,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание двух одинаковых пользователей. Проверка статус кода ответа")
     public void twoIdenticalUsersCannotBeCreatedAndCheckStatusCode() {
         accessToken = userClient.create(user).extract().path("accessToken").toString().substring(6).trim();
         ValidatableResponse response = userClient.create(user);
@@ -50,6 +56,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание двух одинаковых пользователей. Проверка тела ответа")
     public void twoIdenticalUsersCannotBeCreatedAndCheckResponse() {
         accessToken = userClient.create(user).extract().path("accessToken").toString().substring(6).trim();
         ValidatableResponse response = userClient.create(user);
@@ -59,6 +66,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя без email. Проверка статус кода ответа")
     public void userWithoutEmailCannotBeCreatedAndCheckStatusCode() {
         user = UserCenerator.getWithoutEmail();
         ValidatableResponse response = userClient.create(user);
@@ -68,6 +76,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя без email. Проверка тела ответа")
     public void userWithoutEmailCannotBeCreatedAndCheckResponse() {
         user = UserCenerator.getWithoutEmail();
         ValidatableResponse response = userClient.create(user);
@@ -77,6 +86,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя без пароля")
     public void userWithoutPasswordCannotBeCreated() {
         user = UserCenerator.getWithoutPassword();
         ValidatableResponse response = userClient.create(user);
@@ -86,6 +96,7 @@ public class UserCreateTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя без имени")
     public void userWithoutNameCannotBeCreated() {
         user = UserCenerator.getWithoutName();
         ValidatableResponse response = userClient.create(user);

@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -20,13 +21,14 @@ public class ListOfOrdersTest {
     }
 
     @After
-    public void cleanUp(){
-        if(accessToken != null)
+    public void cleanUp() {
+        if (accessToken != null)
             userClient.delete(accessToken);
     }
 
     @Test
-    public void getListOrderWithAuth(){
+    @DisplayName("Получение заказов авторизованного пользователя")
+    public void getListOrderWithAuth() {
         ValidatableResponse loginResponse = userClient.login(UserCredentials.from(user));
         ValidatableResponse responseListOrders = orderClient.listOrdersWithAuth(accessToken);
 
@@ -35,7 +37,8 @@ public class ListOfOrdersTest {
     }
 
     @Test
-    public void getListOrderWithoutAuth(){
+    @DisplayName("Получение заказов неавторизованного пользователя")
+    public void getListOrderWithoutAuth() {
         ValidatableResponse responseListOrders = orderClient.listOrdersWithoutAuth();
 
         String body = responseListOrders.extract().path("message");

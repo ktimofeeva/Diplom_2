@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -22,13 +23,14 @@ public class OrderTest {
     }
 
     @After
-    public void cleanUp(){
-        if(accessToken != null)
+    public void cleanUp() {
+        if (accessToken != null)
             userClient.delete(accessToken);
     }
 
     @Test
-    public void orderCannotBeCreatedWithoutAuthWithoutIngridients(){
+    @DisplayName("Создание заказа без ингредиентов неавторизованным пользователем")
+    public void orderCannotBeCreatedWithoutAuthWithoutIngridients() {
         ValidatableResponse responseOrderCreate = orderClient.createWithoutAuthWithoutIngridients();
 
         String body = responseOrderCreate.extract().path("message");
@@ -36,7 +38,8 @@ public class OrderTest {
     }
 
     @Test
-    public void orderCannotBeCreatedWithAuthWithoutIngridients(){
+    @DisplayName("Создание заказа без ингредиентов авторизованным пользователем")
+    public void orderCannotBeCreatedWithAuthWithoutIngridients() {
         ValidatableResponse loginResponse = userClient.login(UserCredentials.from(user));
         ValidatableResponse responseOrderCreate = orderClient.createWithAuthWithoutIngridients(accessToken);
 
@@ -45,18 +48,20 @@ public class OrderTest {
     }
 
     @Test
-    public void orderCanBeCreatedWithAuthWithIngridients(){
+    @DisplayName("Создание заказа с ингредиентами авторизованным пользователем")
+    public void orderCanBeCreatedWithAuthWithIngridients() {
         order = OrderGenerator.getDefault();
 
         ValidatableResponse loginResponse = userClient.login(UserCredentials.from(user));
-        ValidatableResponse responseOrderCreate = orderClient.createWithAuthWithIngridients(order,accessToken);
+        ValidatableResponse responseOrderCreate = orderClient.createWithAuthWithIngridients(order, accessToken);
 
         boolean body = responseOrderCreate.extract().path("success");
         assertEquals(true, body);
     }
 
     @Test
-    public void orderCanBeCreateWithoutAuthWithIngridients(){
+    @DisplayName("Создание заказа с ингредиентами неавторизованным пользователем")
+    public void orderCanBeCreateWithoutAuthWithIngridients() {
         order = OrderGenerator.getDefault();
 
         ValidatableResponse responseOrderCreate = orderClient.createWithoutAuthWithIngridients(order);
@@ -66,7 +71,8 @@ public class OrderTest {
     }
 
     @Test
-    public void orderCannotBeCreatedWithErrorHashIngridients(){
+    @DisplayName("Создание заказа с неверным хешем ингредиентов")
+    public void orderCannotBeCreatedWithErrorHashIngridients() {
         order = OrderGenerator.getWithErrorHash();
 
         ValidatableResponse responseOrderCreate = orderClient.createWithoutAuthWithIngridients(order);

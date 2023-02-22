@@ -1,3 +1,4 @@
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -21,49 +22,53 @@ public class UserChangeTest {
     }
 
     @After
-    public void cleanUp(){
-        if(accessToken != null)
+    public void cleanUp() {
+        if (accessToken != null)
             userClient.delete(accessToken);
     }
 
     @Test
-    public void userCanBeChangeName(){
+    @DisplayName("Изменение имени пользователя")
+    public void userCanBeChangeName() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.change(accessToken,new User(user.getEmail(), user.getPassword(),"new"+user.getName()));
+        ValidatableResponse userChange = userClient.change(accessToken, new User(user.getEmail(), user.getPassword(), "new" + user.getName()));
 
-        String expectedResult = "new"+user.getName();
-        String actualResult =  userChange.extract().path("user.name");
+        String expectedResult = "new" + user.getName();
+        String actualResult = userChange.extract().path("user.name");
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void userCanBeChangeEmail(){
+    @DisplayName("Изменение email пользователя")
+    public void userCanBeChangeEmail() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.change(accessToken,new User("new"+user.getEmail(), user.getPassword(),user.getName()));
+        ValidatableResponse userChange = userClient.change(accessToken, new User("new" + user.getEmail(), user.getPassword(), user.getName()));
 
-        String expectedResult = ("new"+user.getEmail()).toLowerCase(Locale.ROOT);
-        String actualResult =  userChange.extract().path("user.email");
+        String expectedResult = ("new" + user.getEmail()).toLowerCase(Locale.ROOT);
+        String actualResult = userChange.extract().path("user.email");
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void userCanBeChangePassword(){
+    @DisplayName("Изменение пароля пользователя")
+    public void userCanBeChangePassword() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.change(accessToken,new User(user.getEmail(), "new"+user.getPassword(),user.getName()));
+        ValidatableResponse userChange = userClient.change(accessToken, new User(user.getEmail(), "new" + user.getPassword(), user.getName()));
 
         boolean expectedResult = true;
-        boolean actualResult =  userChange.extract().path("success");
+        boolean actualResult = userChange.extract().path("success");
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void userCanNotBeChangeEmailExisting(){
+    @DisplayName("Изменение почты пользователя на уже существующую в системе")
+    public void userCanNotBeChangeEmailExisting() {
         User userExisting = UserCenerator.getDefault();
         ValidatableResponse responseExisting = userClient.create(userExisting);
         String accessTokenUserExisting = responseExisting.extract().path("accessToken").toString().substring(6).trim();
@@ -71,33 +76,35 @@ public class UserChangeTest {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.change(accessToken,new User(userExisting.getEmail(), user.getPassword(),user.getName()));
+        ValidatableResponse userChange = userClient.change(accessToken, new User(userExisting.getEmail(), user.getPassword(), user.getName()));
 
         String expectedResult = "User with such email already exists";
-        String actualResult =  userChange.extract().path("message");
+        String actualResult = userChange.extract().path("message");
         assertEquals(expectedResult, actualResult);
 
         userClient.delete(accessTokenUserExisting);
     }
 
     @Test
-    public void userCanNotBeChangeWithoutAuthAndCheckResponse(){
+    @DisplayName("Изменение пользователя без авторизации. Проверка тела ответа")
+    public void userCanNotBeChangeWithoutAuthAndCheckResponse() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.changeWithoutAuth(new User(user.getEmail(), user.getPassword(),"new"+user.getName()));
+        ValidatableResponse userChange = userClient.changeWithoutAuth(new User(user.getEmail(), user.getPassword(), "new" + user.getName()));
 
         String expectedResult = "You should be authorised";
-        String actualResult =  userChange.extract().path("message");
+        String actualResult = userChange.extract().path("message");
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
-    public void userCanNotBeChangeWithoutAuthAndStatusCode(){
+    @DisplayName("Изменение пользователя без авторизации. Проверка статус кода ответа")
+    public void userCanNotBeChangeWithoutAuthAndStatusCode() {
         ValidatableResponse response = userClient.create(user);
         accessToken = response.extract().path("accessToken").toString().substring(6).trim();
 
-        ValidatableResponse userChange = userClient.changeWithoutAuth(new User(user.getEmail(), user.getPassword(),"new"+user.getName()));
+        ValidatableResponse userChange = userClient.changeWithoutAuth(new User(user.getEmail(), user.getPassword(), "new" + user.getName()));
 
         int statusCode = userChange.extract().statusCode();
         assertEquals(SC_UNAUTHORIZED, statusCode);

@@ -17,7 +17,7 @@ public class UserClient extends Client {
                 .then();
     }
 
-    public ValidatableResponse login(UserCredentials userCredentials){
+    public ValidatableResponse login(UserCredentials userCredentials) {
         return given()
                 .spec(getSpec())
                 .body(userCredentials)
@@ -26,7 +26,7 @@ public class UserClient extends Client {
                 .then();
     }
 
-    public ValidatableResponse delete(String accessToken){
+    public ValidatableResponse delete(String accessToken) {
         return given()
                 .header("authorization", "bearer " + accessToken)
                 .spec(getSpec())
